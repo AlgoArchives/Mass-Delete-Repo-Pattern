@@ -4,6 +4,16 @@ import requests
 GITHUB_TOKEN = 'your-token'
 ORG_NAME = 'your-org-username'
 
+def delete_repo(repo_name):
+    url = f'https://api.github.com/repos/{ORG_NAME}/{repo_name}'
+    response = requests.delete(url, headers={'Authorization': f'token {GITHUB_TOKEN}'})
+    
+    if response.status_code == 204:
+        print(f'Successfully deleted repository: {repo_name}')
+    else:
+        print(f'Failed to delete repository: {repo_name}. Status code: {response.status_code}')
+        print(response.json())
+
 def list_repos():
     url = f'https://api.github.com/orgs/{ORG_NAME}/repos'
     response = requests.get(url, headers={'Authorization': f'token {GITHUB_TOKEN}'})
