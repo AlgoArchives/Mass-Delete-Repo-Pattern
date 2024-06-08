@@ -15,14 +15,23 @@ def delete_repo(repo_name):
         print(response.json())
 
 def list_repos():
-    url = f'https://api.github.com/orgs/{ORG_NAME}/repos'
-    response = requests.get(url, headers={'Authorization': f'token {GITHUB_TOKEN}'})
+    repos = []
+    page = 1
+    while True:
+        url = f'https://api.github.com/orgs/{ORG_NAME}/repos?page={page}&per_page=100'
+        response = requests.get(url, headers={'Authorization': f'token {GITHUB_TOKEN}'})
+        
+        if response.status_code == 200:
+            page_repos = response.json()
+            if not page_repos:
+                break
+            repos.extend(page_repos)
+            page += 1
+        else:
+            print(f'Failed to retrieve repositories. Status code: {response.status_code}')
+            break
     
-    if response.status_code == 200:
-        return response.json()
-    else:
-        print(f'Failed to retrieve repositories. Status code: {response.status_code}')
-        return []
+    return repos
 
 def main():
     repos = list_repos()
